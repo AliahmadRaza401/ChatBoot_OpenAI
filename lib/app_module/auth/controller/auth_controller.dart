@@ -1,10 +1,13 @@
 import 'package:ai_chatbot/Utils/app_imports/app_imports.dart';
+import 'package:ai_chatbot/app_module/auth/model/user_model.dart';
 import 'package:ai_chatbot/app_module/chatscreen/view/chat_screen.dart';
 
 class AuthController extends GetxController {
   var isLoading = false.obs;
+  Rxn<UserModel> user = Rxn<UserModel>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmController = TextEditingController();
@@ -33,6 +36,7 @@ class AuthController extends GetxController {
   Future<void> signUp() async {
     isLoading(true);
     if (emailController.text == '' ||
+        nameController.text == '' ||
         passwordController.text == '' ||
         confirmController.text == '') {
       //All fields are mandatory
@@ -197,6 +201,7 @@ class AuthController extends GetxController {
           .collection('Users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .set({
+        'user_name': nameController.text.toString(),
         'user_email': emailController.text.toString(),
         'user_password': passwordController.text.toString(),
         'user_token': token.toString(),
@@ -217,6 +222,39 @@ class AuthController extends GetxController {
       isLoading(false);
     } finally {
       isLoading(false);
+    }
+  }
+
+  getUserData() async {
+    try {
+      isLoading(true);
+      debugPrint('isLoading $isLoading');
+
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      if (userSnapshot.exists) {
+        Map<String, dynamic>? userData =
+            userSnapshot.data() as Map<String, dynamic>?;
+        if (userData != null) {
+          user.value = UserModel.fromMap(userData);
+          debugPrint("Name: ${user.value!.userName}");
+          debugPrint("email: ${user.value!.userEmail}");
+          storageBox.write(StorageConstants.userType, "user");
+          isLoading(false);
+          update();
+        } else {
+          debugPrint("User data is null");
+          isLoading(false);
+        }
+      } else {
+        debugPrint("User not found");
+        isLoading(false);
+      }
+    } catch (e) {
+      isLoading(false);
+      debugPrint(e.toString());
     }
   }
 }

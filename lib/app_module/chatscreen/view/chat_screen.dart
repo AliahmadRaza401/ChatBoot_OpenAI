@@ -1,4 +1,5 @@
 import 'package:ai_chatbot/Utils/app_imports/app_imports.dart';
+import 'package:ai_chatbot/app_module/auth/controller/auth_controller.dart';
 import 'package:ai_chatbot/app_module/auth/view/login_screen.dart';
 import 'package:ai_chatbot/app_module/chatscreen/controller/chat_request.dart';
 import 'package:ai_chatbot/app_module/chatscreen/controller/chat_service.dart';
@@ -19,16 +20,17 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  AuthController authController = Get.put(AuthController());
   final TextEditingController _controller = TextEditingController();
   final List<Message> _messages = [];
   final ChatService _chatService = ChatService();
   bool _isLoading = false;
   int _messageCount = 0;
   void _sendMessage() async {
-    if (widget.isSkip = true && _messageCount > 2) {
-      customSnackBar(title: "Please Login to use more");
-      return;
-    }
+    // if (widget.isSkip = true && _messageCount > 2) {
+    //   customSnackBar(title: "Please Login to use more");
+    //   return;
+    // }
     if (_controller.text.isEmpty) return;
     setState(() {
       _messages.add(Message(role: "user", content: _controller.text));
@@ -44,6 +46,14 @@ class _ChatPageState extends State<ChatPage> {
     });
 
     _controller.clear();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // if(!widget.isSkip){
+    authController.getUserData();
+    // }
   }
 
   @override
@@ -77,65 +87,117 @@ class _ChatPageState extends State<ChatPage> {
               scaffoldKey.currentState!.openDrawer();
             },
           ),
-          Expanded(
-            child: _messages.isEmpty
-                ? Center(
-                    child: SingleChildScrollView(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          children: [
-                            vSizedBox(height: Get.height * 0.1),
-                            Image.asset(
-                              AppImages.logoJpg,
-                              scale: 3,
-                            ),
-                            AppText(
-                                text: "Hello, Boss!\n Am Ready For Help You",
-                                textAlign: TextAlign.center,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.PRIMARY_COLOR_DARK,
-                                size: AppDimensions.FONT_SIZE_30),
-                            vSizedBox(),
-                            AppText(
-                                text:
-                                    "Ask me anything what's on your mind. Am here to Assist you!",
-                                textAlign: TextAlign.center,
-                                // fontWeight: FontWeight.w700,
-                                color: AppColors.GRAY,
-                                size: AppDimensions.FONT_SIZE_16)
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _messages.length,
-                    itemBuilder: (context, index) {
-                      final message = _messages[index];
-                      return ListTile(
-                        title: Align(
-                          alignment: message.role == 'user'
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: message.role == 'user'
-                                  ? AppColors.PRIMARY_COLOR
-                                  : AppColors.GRAY,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              message.content,
-                              style: const TextStyle(color: Colors.white),
+          Obx(() => authController.isLoading.isTrue
+              ? customLoader(AppColors.RED_COLOR)
+              : Expanded(
+                  child: _messages.isEmpty
+                      ? Center(
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16.0),
+                              child: Column(
+                                children: [
+                                  vSizedBox(height: Get.height * 0.1),
+                                  Image.asset(
+                                    AppImages.logoJpg,
+                                    scale: 3,
+                                  ),
+                                  AppText(
+                                      text:
+                                          "Hello, Boss!\n Am Ready For Help You",
+                                      textAlign: TextAlign.center,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.PRIMARY_COLOR_DARK,
+                                      size: AppDimensions.FONT_SIZE_30),
+                                  vSizedBox(),
+                                  AppText(
+                                      text:
+                                          "Ask me anything what's on your mind. Am here to Assist you!",
+                                      textAlign: TextAlign.center,
+                                      // fontWeight: FontWeight.w700,
+                                      color: AppColors.GRAY,
+                                      size: AppDimensions.FONT_SIZE_16)
+                                ],
+                              ),
                             ),
                           ),
+                        )
+                      : ListView.builder(
+                          itemCount: _messages.length,
+                          itemBuilder: (context, index) {
+                            final message = _messages[index];
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: message.role == 'user'
+                                            ? AppColors.PRIMARY_COLOR
+                                                .withOpacity(0.5)
+                                            : AppColors.GRAY.withOpacity(0.5),
+                                        radius: 14,
+                                        child: message.role == 'user'
+                                            ? AppText(
+                                                text: widget.isSkip == true
+                                                    ? "U"
+                                                    : authController
+                                                        .user
+                                                        .value!
+                                                        .userName
+                                                        .characters
+                                                        .first)
+                                            : Image.asset(
+                                                AppImages.logoJpg,
+                                                height: 18,
+                                              ),
+                                      ),
+                                      hSizedBox(width: 05),
+                                      AppText(
+                                          text: message.role == 'user'
+                                              ? widget.isSkip == true
+                                                  ? "User"
+                                                  : authController
+                                                      .user.value!.userName
+                                              : "Ai Chatbot",
+                                          color:
+                                              AppColors.BLACK.withOpacity(0.7),
+                                          fontWeight: FontWeight.w600),
+                                    ],
+                                  ),
+                                ),
+                                ListTile(
+                                  title: Align(
+                                    alignment:
+                                        // message.role == 'user'
+                                        //     ? Alignment.centerRight
+                                        //     :
+                                        Alignment.centerLeft,
+                                    child: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: message.role == 'user'
+                                              ? AppColors.PRIMARY_COLOR
+                                                  .withOpacity(0.1)
+                                              : AppColors.GRAY.withOpacity(0.3),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: AppText(
+                                            text: message.content,
+                                            color: AppColors.BLACK
+                                                .withOpacity(0.7))),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
-          ),
+                )),
           _isLoading
               ? customLoader(AppColors.PRIMARY_COLOR)
               : Padding(
@@ -151,7 +213,7 @@ class _ChatPageState extends State<ChatPage> {
                             controller: _controller,
                             borderRadius: 100,
                             isPrefix: false,
-                            hint: 'type',
+                            hint: 'Type here...',
                           ),
                         ),
                         hSizedBox(),
@@ -173,7 +235,7 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   ),
                 ),
-          _isLoading ? vSizedBox() :  vSizedBox(height: 10)
+          _isLoading ? vSizedBox() : vSizedBox(height: 10)
         ],
       ),
     );

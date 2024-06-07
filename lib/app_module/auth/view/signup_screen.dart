@@ -37,6 +37,23 @@ class SignupScreen extends StatelessWidget {
                         color: AppColors.GRAY),
                     vSizedBox(height: Get.height * 0.1),
                     AppText(
+                        text: 'Name',
+                        size: AppDimensions.FONT_SIZE_16,
+                        color: AppColors.GRAY),
+                    vSizedBox(height: 10),
+                    AppTextField(
+                      controller: authController.nameController,
+                      borderRadius: AppDimensions.FONT_SIZE_10,
+                      isPrefix: true,
+                      hint: 'John',
+                      icon: Image.asset(
+                        AppImages.emailIcon,
+                        scale: 16,
+                        color: AppColors.GRAY,
+                      ),
+                    ),
+                    vSizedBox(),
+                    AppText(
                         text: 'Email',
                         size: AppDimensions.FONT_SIZE_16,
                         color: AppColors.GRAY),

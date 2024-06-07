@@ -8,7 +8,7 @@ class AuthScreen extends StatelessWidget {
   AuthScreen({super.key});
 
   String subTitle =
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book";
+      "No login required for get started chat with our Ai powered chat bot.\nFeel free to ask what you want to know.";
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +27,7 @@ class AuthScreen extends StatelessWidget {
                     AppText(
                         text: 'Start Free Conversation',
                         size: AppDimensions.FONT_SIZE_45,
-                    fontWeight: FontWeight.w600
-                    ),
+                        fontWeight: FontWeight.w600),
                     AppText(
                         text: subTitle,
                         size: AppDimensions.FONT_SIZE_16,
@@ -38,8 +37,10 @@ class AuthScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         GestureDetector(
-                          onTap: (){
-                            Get.to(ChatPage(isSkip: true,));
+                          onTap: () {
+                            Get.to(ChatPage(
+                              isSkip: true,
+                            ));
                           },
                           child: CircleAvatar(
                               radius: 40,
@@ -71,13 +72,10 @@ class AuthScreen extends StatelessWidget {
                         buttonWidth: Get.width,
                         buttonRadius: AppBorderRadius.BORDER_RADIUS_10,
                         borderColor: AppColors.PRIMARY_COLOR,
-
                         buttonColor: AppColors.WHITE_COLOR,
                         textColor: AppColors.PRIMARY_COLOR,
                         onTap: () {
                           Get.to(LoginScreen());
-
-
                         })
                   ],
                 ),
