@@ -101,7 +101,7 @@ class AuthController extends GetxController {
     try {
       FirebaseAuth auth = FirebaseAuth.instance;
 
-      List<String> signInMethods = await auth.fetchSignInMethodsForEmail(email);
+      List<String> signInMethods = await auth. fetchSignInMethodsForEmail(email);
 
       // If signInMethods is not empty, it means the email is already registered
       return signInMethods.isNotEmpty;
@@ -132,6 +132,7 @@ class AuthController extends GetxController {
       // Perform additional actions after successful sign-up
     } catch (e) {
       debugPrint('Failed to sign up: $e');
+      customSnackBar(title: "$e");
       isLoading(false);
 
       // Show an error message or handle the error
