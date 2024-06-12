@@ -67,9 +67,21 @@ class _SplashViewState extends State<SplashView>
           builder: (context, child) {
             return Transform.scale(
               scale: _scaleAnimation!.value,
-              child: Image.asset(
-                AppImages.logoJpg,
-                scale: 5,
+              child: Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircleAvatar(
+                      radius: 70,
+                      backgroundImage: AssetImage(
+                        AppImages.logoJpg,
+                      ),
+                    ),
+                    vSizedBox(),
+                    AppText(text: "By qVault.ai",size: AppDimensions.FONT_SIZE_14),
+                  ],
+                ),
               ),
             );
           },

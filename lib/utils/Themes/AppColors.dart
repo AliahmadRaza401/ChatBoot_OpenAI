@@ -6,7 +6,8 @@ import 'package:get_storage/get_storage.dart';
 import '../Fonts/AppFonts.dart';
 
 class AppColors {
-  static Color PRIMARY_COLOR = const Color(0xff6043F5);
+  static Color PRIMARY_COLOR = const Color(0xff000081);
+  static Color lightColor = const Color(0xff76B5C5);
   static Color PRIMARY_COLOR_DARK = const Color(0xff0f073b);
   static Color backgroundColor = const Color(0xfff5f5f6);
   static Color lightPrimaryColor = const Color(0xffac9cff);

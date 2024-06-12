@@ -44,6 +44,19 @@ class Message {
       content: map['content'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'role': role,
+      'content': content,
+    };
+  }
+
+  factory Message.fromJson(Map<String, dynamic> json) {
+    return Message(
+      role: json['role'],
+      content: json['content'],
+    );
+  }
 }
 
 
